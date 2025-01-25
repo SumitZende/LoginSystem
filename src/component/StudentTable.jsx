@@ -1,28 +1,33 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { auth, db } from "../firbase.jsx";
+import { signOut } from "firebase/auth";
 
-import {  db } from '../firbase.jsx';
-
-import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
-
+import {
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 
 const StudentTable = () => {
   const [students, setStudents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newStudent, setNewStudent] = useState({});
 
-
   const fetchStudents = async () => {
-    const querySnapshot = await getDocs(collection(db, 'students'));
-    setStudents(querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    const querySnapshot = await getDocs(collection(db, "students"));
+    setStudents(
+      querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+    );
   };
 
   const handleAddStudent = async () => {
-    await addDoc(collection(db, 'students'), newStudent);
+    await addDoc(collection(db, "students"), newStudent);
     setIsModalOpen(false);
     fetchStudents();
   };
-
-  
 
   const handleDelete = async (id) => {
     await deleteDoc(doc(db, "students", id));
@@ -31,13 +36,32 @@ const StudentTable = () => {
   useEffect(() => {
     fetchStudents();
   }, []);
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    await signOut(auth);
+    navigate("/");
+  };
 
   return (
     <div className="flex">
+      <aside className="w-64 bg-gray-800 text-white h-screen p-4 ">
+        <h2 className="text-lg font-bold mb-6">Dashboard</h2>
+        <button
+          onClick={() => navigate("/students")}
+          className="mb-4 block text-left w-full cursor-pointer"
+        >
+          Students
+        </button>
+        <button className="cursor-pointer" onClick={handleLogout}>
+          Logout
+        </button>
+      </aside>
 
       <main className="flex-1 p-6">
         <h1 className="text-2xl font-bold mb-4">Students</h1>
-        <button className="mb-4" onClick={() => setIsModalOpen(true)}>Add Student</button>
+        <button className="mb-4" onClick={() => setIsModalOpen(true)}>
+          Add Student
+        </button>
         {isModalOpen && (
           <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-white p-5 rounded">
@@ -169,7 +193,7 @@ const StudentTable = () => {
           </div>
         )}
 
-<table className="min-w-full table-auto border-collapse border border-gray-300">
+        <table className="min-w-full table-auto border-collapse border border-gray-300">
           <thead>
             <tr>
               <th className="border border-gray-300 p-2">ID</th>
@@ -186,8 +210,12 @@ const StudentTable = () => {
                 <td className="border border-gray-300 p-2">{index + 1}</td>
                 <td className="border border-gray-300 p-2">{student.name}</td>
                 <td className="border border-gray-300 p-2">{student.class}</td>
-                <td className="border border-gray-300 p-2">{student.section}</td>
-                <td className="border border-gray-300 p-2">{student.rollNumber}</td>
+                <td className="border border-gray-300 p-2">
+                  {student.section}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {student.rollNumber}
+                </td>
                 <td className="border border-gray-300 p-2 flex justify-around">
                   <button
                     className="bg-green-500 text-white px-2 py-1 rounded"
@@ -213,7 +241,6 @@ const StudentTable = () => {
           </tbody>
         </table>
       </main>
-      
     </div>
   );
 };

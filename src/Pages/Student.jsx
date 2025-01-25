@@ -1,10 +1,9 @@
-import Sidebar from "../component/sidebar"
-import StudentTable from "../component/StudentTable"
+
+import StudentTable from "../component/StudentTable.jsx"
 
 export default function Student() {
   return (
     <div className="flex">
-        <Sidebar/>
         <StudentTable/>
     </div>
   )
