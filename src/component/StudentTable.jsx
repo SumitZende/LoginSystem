@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../firbase.jsx';
-import { signOut } from 'firebase/auth';
+import  { useState, useEffect } from 'react';
+
+import {  db } from '../firbase.jsx';
+
 import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
 
 
@@ -9,7 +9,7 @@ const StudentTable = () => {
   const [students, setStudents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newStudent, setNewStudent] = useState({});
-  const navigate = useNavigate();
+
 
   const fetchStudents = async () => {
     const querySnapshot = await getDocs(collection(db, 'students'));
@@ -22,10 +22,7 @@ const StudentTable = () => {
     fetchStudents();
   };
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    navigate('/');
-  };
+  
 
   const handleDelete = async (id) => {
     await deleteDoc(doc(db, "students", id));
